@@ -14,48 +14,56 @@
 
 body {
   margin: 0;
-  min-height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   font-family: "Trebuchet MS", "PingFang SC", "Microsoft YaHei", sans-serif;
   color: var(--text);
   background:
     radial-gradient(circle at 20% 20%, rgba(255, 209, 102, 0.18), transparent 35%),
     radial-gradient(circle at 80% 10%, rgba(76, 201, 240, 0.2), transparent 30%),
     linear-gradient(135deg, var(--bg-1), var(--bg-2));
-  display: grid;
-  place-items: center;
-  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
 }
 
 .app {
   width: min(960px, 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .hud {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 14px;
-  padding: 14px 18px;
+  padding: 10px 16px;
   backdrop-filter: blur(6px);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 
 .hud h1 {
-  margin: 0 0 8px;
-  font-size: 28px;
+  margin: 0 0 6px;
+  font-size: 22px;
   letter-spacing: 1px;
 }
 
 .stats {
   display: flex;
-  gap: 18px;
+  gap: 14px;
   flex-wrap: wrap;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  font-size: 14px;
 }
 
 .tips {
   margin: 0;
   opacity: 0.9;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .game-wrap {
@@ -66,13 +74,17 @@ body {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 canvas {
   width: 100%;
-  height: auto;
+  flex: 1;
+  min-height: 0;
   display: block;
   background: #1b2a1f;
+  object-fit: contain;
 }
 
 .overlay {
@@ -111,9 +123,10 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 20px 18px;
+  padding: 8px 12px 10px;
   pointer-events: none;
   background: rgba(0,0,0,0.25);
+  flex-shrink: 0;
 }
 
 .controls > * {
@@ -184,21 +197,47 @@ button {
 }
 
 @media (max-width: 700px) {
+  body {
+    padding: 6px;
+  }
+
   .ctrl-btn {
-    width: 90px;
-    height: 90px;
-    font-size: 30px;
+    width: 72px;
+    height: 72px;
+    font-size: 26px;
+    border-radius: 14px;
   }
   .fire-btn {
-    width: 88px;
-    height: 88px;
-    font-size: 36px;
+    width: 72px;
+    height: 72px;
+    font-size: 30px;
   }
-}
 
-@media (max-width: 700px) {
+  .hud {
+    padding: 6px 10px;
+    margin-bottom: 4px;
+  }
   .hud h1 {
-    font-size: 22px;
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+  .stats {
+    gap: 8px;
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+  .tips {
+    font-size: 11px;
+  }
+
+  .controls {
+    padding: 4px 8px 6px;
+  }
+  .dpad {
+    gap: 3px;
+  }
+  .dpad-mid {
+    gap: 3px;
   }
 
   .overlay h2 {
