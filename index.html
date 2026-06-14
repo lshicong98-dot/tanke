@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>坦克大战</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="hud">
+      <h1>坦克大战</h1>
+      <div class="stats">
+        <span>分数: <strong id="score">0</strong></span>
+        <span>生命: <strong id="lives">3</strong></span>
+        <span>敌人: <strong id="enemies">0</strong></span>
+        <span>子弹: <strong id="bulletCount">1</strong>x</span>
+        <span>关卡: <strong id="level">1 (0/30)</strong></span>
+      </div>
+      <p class="tips">操作: WASD/方向键移动，空格射击，R重新开始</p>
+    </header>
+    <section class="game-wrap">
+      <canvas id="game" width="900" height="600" aria-label="坦克大战游戏画布"></canvas>
+      <div id="controls" class="controls">
+        <div class="dpad">
+          <button class="ctrl-btn" data-key="ArrowUp">↑</button>
+          <div class="dpad-mid">
+            <button class="ctrl-btn" data-key="ArrowLeft">←</button>
+            <button class="ctrl-btn" data-key="ArrowDown">↓</button>
+            <button class="ctrl-btn" data-key="ArrowRight">→</button>
+          </div>
+        </div>
+        <button class="ctrl-btn fire-btn" data-key=" ">🔥</button>
+      </div>
+      <div id="overlay" class="overlay hidden">
+        <h2 id="overlayTitle">游戏结束</h2>
+        <p id="overlayText"></p>
+        <button id="restartBtn">重新开始</button>
+      </div>
+    </section>
+  </main>
+  <script src="./game.js"></script>
+</body>
+</html>

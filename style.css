@@ -1,0 +1,289 @@
+:root {
+  --bg-1: #0f1b2d;
+  --bg-2: #1f3a5f;
+  --panel: rgba(8, 16, 28, 0.72);
+  --line: rgba(255, 255, 255, 0.18);
+  --text: #f4f7fb;
+  --accent: #ffd166;
+  --danger: #ff6b6b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Trebuchet MS", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 209, 102, 0.18), transparent 35%),
+    radial-gradient(circle at 80% 10%, rgba(76, 201, 240, 0.2), transparent 30%),
+    linear-gradient(135deg, var(--bg-1), var(--bg-2));
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: #1a1a2e;
+  color: #f0f0f0;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app {
+  width: min(960px, 100%);
+}
+
+.hud {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 18px;
+  backdrop-filter: blur(6px);
+  margin-bottom: 12px;
+}
+
+.hud h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  letter-spacing: 1px;
+}
+
+.stats {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.tips {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 14px;
+}
+
+.game-wrap {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+}
+
+canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: #1b2a1f;
+  touch-action: none;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 10px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.overlay h2 {
+  margin: 0;
+  font-size: 36px;
+}
+
+.overlay p {
+  margin: 0;
+  font-size: 18px;
+}
+
+button {
+  justify-self: center;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--accent);
+  color: #1f1f1f;
+}
+
+.controls {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 20px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.controls > * {
+  pointer-events: auto;
+}
+
+.dpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.dpad-mid {
+  display: flex;
+  gap: 4px;
+}
+
+.ctrl-btn {
+  width: 52px;
+  height: 52px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-radius: 12px;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  display: grid;
+  place-items: center;
+  transition: background 0.08s;
+}
+
+.ctrl-btn:active,
+.ctrl-btn.pressed {
+  background: rgba(255,209,102,0.55);
+  border-color: var(--accent);
+}
+
+.fire-btn {
+  width: 68px;
+  height: 68px;
+  font-size: 28px;
+  border-radius: 50%;
+  background: rgba(180,40,40,0.5);
+  border-color: rgba(255,100,100,0.5);
+}
+
+.fire-btn:active,
+.fire-btn.pressed {
+  background: rgba(255,80,80,0.7) !important;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ── 桌面端（≥701px）：隐藏虚拟按键 ── */
+@media (min-width: 701px) {
+  .controls {
+    display: none !important;
+  }
+}
+
+/* ── 移动端 / 触屏设备布局 ── */
+@media (hover: none) and (pointer: coarse), (max-width: 700px) {
+  body {
+    padding: 0;
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  .app {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    height: 100vh;
+  }
+
+  .hud {
+    border-radius: 0;
+    margin-bottom: 0;
+    padding: 8px 12px;
+    flex-shrink: 0;
+  }
+
+  .hud h1 {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  .stats {
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .tips {
+    font-size: 11px;
+  }
+
+  .game-wrap {
+    flex: 1;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  canvas {
+    flex: 1;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    object-fit: contain;
+  }
+
+  .controls {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 8px 20px 16px;
+    position: relative;
+    inset: auto;
+    flex-shrink: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .ctrl-btn {
+    width: 56px;
+    height: 56px;
+    font-size: 22px;
+    border-width: 2px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .ctrl-btn:active,
+  .ctrl-btn.pressed {
+    background: rgba(255,209,102,0.6);
+    transform: scale(0.92);
+  }
+
+  .fire-btn {
+    width: 72px;
+    height: 72px;
+    font-size: 30px;
+  }
+
+  .overlay h2 {
+    font-size: 24px;
+  }
+
+  .overlay p {
+    font-size: 15px;
+  }
+
+  .overlay button {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
