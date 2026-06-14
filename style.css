@@ -77,12 +77,50 @@ body {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
 }
 
+.mobile-layout {
+  display: none;
+}
+
+.center-stage {
+  display: block;
+}
+
 canvas {
   width: 100%;
   height: auto;
   display: block;
   background: #1b2a1f;
   touch-action: none;
+}
+
+.controls-group {
+  position: absolute;
+  z-index: 15;
+}
+
+.side-controls {
+  pointer-events: none;
+}
+
+.side-controls > * {
+  pointer-events: auto;
+}
+
+.side-controls button {
+  display: block;
+}
+
+.left-controls {
+  bottom: var(--safe-bottom, 12px);
+  left: var(--safe-left, 12px);
+}
+
+.right-controls {
+  bottom: var(--safe-bottom, 12px);
+  right: var(--safe-right, 12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .overlay {
@@ -139,9 +177,28 @@ button {
   gap: 4px;
 }
 
-.dpad-mid {
+.dpad-row {
   display: flex;
   gap: 4px;
+}
+
+.left-controls .dpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.left-controls .dpad-row {
+  display: flex;
+  gap: 6px;
+}
+
+.right-controls {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .ctrl-btn {
@@ -183,7 +240,7 @@ button {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .rotate-hint {
@@ -216,14 +273,47 @@ button {
   font-size: 14px;
 }
 
-/* ── 桌面端（≥701px）：隐藏虚拟按键 ── */
+.rotate-hint {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: rgba(5, 10, 18, 0.88);
+  padding: 20px;
+}
+
+.rotate-card {
+  width: min(420px, 92vw);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(12, 22, 36, 0.92);
+  padding: 18px 16px;
+  text-align: center;
+}
+
+.rotate-card h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+
+.rotate-card p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 14px;
+}
+
+/* ── 桌面端（≥701px）：隐藏虚拟按键和横屏提示 ── */
 @media (min-width: 701px) {
-  .controls {
+  .controls-group {
+    display: none !important;
+  }
+  .rotate-hint {
     display: none !important;
   }
 }
 
-/* ── 移动端 / 触屏设备布局 ── */
+/* ── 手机端竖屏基础布局 ── */
 @media (hover: none) and (pointer: coarse), (max-width: 700px) {
   body {
     padding: 0;
@@ -263,29 +353,22 @@ button {
   .game-wrap {
     flex: 1;
     border-radius: 0;
-    display: flex;
-    flex-direction: column;
     min-height: 0;
+  }
+
+  .center-stage {
+    height: 100%;
   }
 
   canvas {
-    flex: 1;
     width: 100%;
-    height: auto;
-    min-height: 0;
+    height: 100%;
     object-fit: contain;
   }
 
-  .controls {
+  .controls-group {
     display: flex !important;
-    justify-content: space-between;
-    align-items: flex-end;
-    padding: 8px calc(12px + var(--safe-right)) calc(12px + var(--safe-bottom)) calc(12px + var(--safe-left));
-    position: relative;
-    inset: auto;
-    flex-shrink: 0;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(4px);
+    position: absolute;
   }
 
   .ctrl-btn {
@@ -294,12 +377,6 @@ button {
     font-size: clamp(18px, 4.2vw, 22px);
     border-width: 2px;
     -webkit-tap-highlight-color: transparent;
-  }
-
-  .ctrl-btn:active,
-  .ctrl-btn.pressed {
-    background: rgba(255,209,102,0.6);
-    transform: scale(0.92);
   }
 
   .fire-btn {
@@ -319,6 +396,91 @@ button {
   .overlay button {
     font-size: 14px;
     padding: 8px 16px;
+  }
+}
+
+/* ── 手机横屏：按键浮层在左下角和右下角 ── */
+@media (hover: none) and (pointer: coarse) and (orientation: landscape), (max-width: 900px) and (orientation: landscape) {
+  .hud {
+    position: absolute;
+    top: var(--safe-top);
+    left: var(--safe-left);
+    right: var(--safe-right);
+    z-index: 20;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    padding: 4px 10px;
+    border-radius: 0;
+  }
+
+  .hud h1 {
+    display: none;
+  }
+
+  .stats {
+    font-size: 11px;
+    gap: 8px;
+    margin-bottom: 0;
+    justify-content: center;
+  }
+
+  .tips {
+    display: none;
+  }
+
+  .game-wrap {
+    border-radius: 0;
+    flex: 1;
+  }
+
+  .center-stage {
+    height: 100%;
+  }
+
+  canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  .controls-group {
+    display: flex !important;
+  }
+
+  .dpad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dpad-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  .left-controls {
+    bottom: calc(12px + var(--safe-bottom));
+    left: calc(12px + var(--safe-left));
+    flex-direction: column;
+  }
+
+  .right-controls {
+    bottom: calc(12px + var(--safe-bottom));
+    right: calc(12px + var(--safe-right));
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .ctrl-btn {
+    width: clamp(40px, 8.2vw, 52px);
+    height: clamp(40px, 8.2vw, 52px);
+    font-size: clamp(16px, 3.2vw, 20px);
+  }
+
+  .fire-btn {
+    width: clamp(52px, 10vw, 64px);
+    height: clamp(52px, 10vw, 64px);
+    font-size: clamp(22px, 4vw, 28px);
   }
 }
 

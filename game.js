@@ -954,7 +954,7 @@ document.addEventListener("gesturestart", (e) => {
   }
 });
 
-// ── 移动端竖屏提示横屏游玩 ──
+// ── 移动端竖屏提示横屏游玩（用宽高比判断，避免 orientation 误判） ──
 (function setupRotateHint() {
   if (!rotateHint) return;
 
@@ -965,8 +965,8 @@ document.addEventListener("gesturestart", (e) => {
   }
 
   const updateRotateHint = () => {
-    const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-    rotateHint.classList.toggle("hidden", !isPortrait);
+    const isLandscape = window.innerWidth > window.innerHeight;
+    rotateHint.classList.toggle("hidden", isLandscape);
   };
 
   updateRotateHint();
