@@ -934,24 +934,11 @@ window.addEventListener("keyup", (e) => {
     btn.addEventListener("pointerleave", end);
     btn.addEventListener("mousedown", start);
     btn.addEventListener("mouseup", end);
-    btn.addEventListener("touchstart", start, { passive: false });
+    btn.addEventListener("touchstart", start, { passive: true });
     btn.addEventListener("touchend", end);
     btn.addEventListener("touchcancel", end);
   });
 })();
-
-// ── 防止移动端页面滚动/缩放 ──
-document.addEventListener("touchmove", (e) => {
-  if (e.target === canvas || e.target.closest(".game-wrap") || e.target.closest(".controls")) {
-    e.preventDefault();
-  }
-}, { passive: false });
-
-document.addEventListener("gesturestart", (e) => {
-  if (e.target === canvas || e.target.closest(".game-wrap")) {
-    e.preventDefault();
-  }
-});
 
 restartBtn.addEventListener("click", resetGame);
 
