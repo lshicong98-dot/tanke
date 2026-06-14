@@ -2,17 +2,11 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>坦克大战</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <div id="rotateHint" class="rotate-hint hidden" aria-live="polite">
-    <div class="rotate-card">
-      <h2>请横屏游玩</h2>
-      <p>将手机旋转到横屏，获得更好的操作体验</p>
-    </div>
-  </div>
   <main class="app">
     <header class="hud">
       <h1>坦克大战</h1>
@@ -26,22 +20,16 @@
       <p class="tips">操作: WASD/方向键移动，空格射击，R重新开始</p>
     </header>
     <section class="game-wrap">
-      <div class="center-stage">
-        <canvas id="game" width="900" height="600" aria-label="坦克大战游戏画布"></canvas>
-      </div>
-
-      <div id="leftControls" class="side-controls left-controls controls-group">
+      <canvas id="game" width="900" height="600" aria-label="坦克大战游戏画布"></canvas>
+      <div id="controls" class="controls">
         <div class="dpad">
           <button class="ctrl-btn" data-key="ArrowUp">↑</button>
-          <div class="dpad-row">
+          <div class="dpad-mid">
             <button class="ctrl-btn" data-key="ArrowLeft">←</button>
             <button class="ctrl-btn" data-key="ArrowDown">↓</button>
             <button class="ctrl-btn" data-key="ArrowRight">→</button>
           </div>
         </div>
-      </div>
-
-      <div id="rightControls" class="side-controls right-controls controls-group">
         <button class="ctrl-btn fire-btn" data-key=" ">🔥</button>
       </div>
       <div id="overlay" class="overlay hidden">
