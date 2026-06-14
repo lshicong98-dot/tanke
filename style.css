@@ -54,6 +54,7 @@ body {
   margin: 0 0 8px;
   font-size: 28px;
   letter-spacing: 1px;
+  opacity: 0.35;
 }
 
 .stats {
@@ -61,11 +62,12 @@ body {
   gap: 18px;
   flex-wrap: wrap;
   margin-bottom: 8px;
+  opacity: 0.35;
 }
 
 .tips {
   margin: 0;
-  opacity: 0.9;
+  opacity: 0.3;
   font-size: 14px;
 }
 
@@ -204,12 +206,12 @@ button {
 .ctrl-btn {
   width: 52px;
   height: 52px;
-  border: 2px solid rgba(255,255,255,0.35);
+  border: 1px solid rgba(255,255,255,0.06);
   border-radius: 12px;
-  background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(4px);
-  color: #fff;
-  font-size: 22px;
+  background: rgba(0,0,0,0.03);
+  backdrop-filter: none;
+  color: rgba(255,255,255,0.2);
+  font-size: 20px;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -221,22 +223,23 @@ button {
 
 .ctrl-btn:active,
 .ctrl-btn.pressed {
-  background: rgba(255,209,102,0.55);
-  border-color: var(--accent);
+  background: rgba(255,209,102,0.12);
+  border-color: rgba(255,209,102,0.25);
 }
 
 .fire-btn {
   width: 68px;
   height: 68px;
-  font-size: 28px;
+  font-size: 26px;
   border-radius: 50%;
-  background: rgba(180,40,40,0.5);
-  border-color: rgba(255,100,100,0.5);
+  background: rgba(180,40,40,0.03);
+  border: 1px solid rgba(255,100,100,0.06);
+  color: rgba(255,255,255,0.15);
 }
 
 .fire-btn:active,
 .fire-btn.pressed {
-  background: rgba(255,80,80,0.7) !important;
+  background: rgba(255,80,80,0.12) !important;
 }
 
 .hidden {
@@ -303,8 +306,8 @@ button {
   font-size: 14px;
 }
 
-/* ── 桌面端（≥701px）：隐藏虚拟按键和横屏提示 ── */
-@media (min-width: 701px) {
+/* ── 桌面端（有鼠标且≥701px）：隐藏虚拟按键和横屏提示 ── */
+@media (hover: hover) and (pointer: fine) and (min-width: 701px) {
   .controls-group {
     display: none !important;
   }
@@ -344,10 +347,12 @@ button {
   .stats {
     gap: 10px;
     font-size: 13px;
+    opacity: 0.3;
   }
 
   .tips {
     font-size: 11px;
+    opacity: 0.3;
   }
 
   .game-wrap {
@@ -407,8 +412,8 @@ button {
     left: var(--safe-left);
     right: var(--safe-right);
     z-index: 20;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(6px);
+    background: rgba(0,0,0,0.08);
+    backdrop-filter: none;
     padding: 4px 10px;
     border-radius: 0;
   }
@@ -422,6 +427,7 @@ button {
     gap: 8px;
     margin-bottom: 0;
     justify-content: center;
+    opacity: 0.3;
   }
 
   .tips {
@@ -475,12 +481,14 @@ button {
     width: clamp(40px, 8.2vw, 52px);
     height: clamp(40px, 8.2vw, 52px);
     font-size: clamp(16px, 3.2vw, 20px);
+    color: rgba(255,255,255,0.15);
   }
 
   .fire-btn {
     width: clamp(52px, 10vw, 64px);
     height: clamp(52px, 10vw, 64px);
     font-size: clamp(22px, 4vw, 28px);
+    color: rgba(255,255,255,0.15);
   }
 }
 
@@ -496,8 +504,8 @@ button {
     left: var(--safe-left);
     right: var(--safe-right);
     z-index: 20;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(6px);
+    background: rgba(0,0,0,0.08);
+    backdrop-filter: none;
     padding: 4px 10px;
     border-radius: 0;
   }
@@ -511,6 +519,7 @@ button {
     gap: 8px;
     margin-bottom: 0;
     justify-content: center;
+    opacity: 0.3;
   }
 
   .tips {
@@ -543,11 +552,13 @@ button {
     width: clamp(40px, 8.2vw, 52px);
     height: clamp(40px, 8.2vw, 52px);
     font-size: clamp(16px, 3.2vw, 20px);
+    color: rgba(255,255,255,0.15);
   }
 
   .fire-btn {
     width: clamp(52px, 10vw, 64px);
     height: clamp(52px, 10vw, 64px);
     font-size: clamp(22px, 4vw, 28px);
+    color: rgba(255,255,255,0.15);
   }
 }
