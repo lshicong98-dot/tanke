@@ -6,6 +6,10 @@
   --text: #f4f7fb;
   --accent: #ffd166;
   --danger: #ff6b6b;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
 }
 
 * {
@@ -182,6 +186,36 @@ button {
   display: none;
 }
 
+.rotate-hint {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: rgba(5, 10, 18, 0.88);
+  padding: 20px;
+}
+
+.rotate-card {
+  width: min(420px, 92vw);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(12, 22, 36, 0.92);
+  padding: 18px 16px;
+  text-align: center;
+}
+
+.rotate-card h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+
+.rotate-card p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 14px;
+}
+
 /* ── 桌面端（≥701px）：隐藏虚拟按键 ── */
 @media (min-width: 701px) {
   .controls {
@@ -246,7 +280,7 @@ button {
     display: flex !important;
     justify-content: space-between;
     align-items: flex-end;
-    padding: 8px 20px 16px;
+    padding: 8px calc(12px + var(--safe-right)) calc(12px + var(--safe-bottom)) calc(12px + var(--safe-left));
     position: relative;
     inset: auto;
     flex-shrink: 0;
@@ -255,9 +289,9 @@ button {
   }
 
   .ctrl-btn {
-    width: 56px;
-    height: 56px;
-    font-size: 22px;
+    width: clamp(44px, 11vw, 58px);
+    height: clamp(44px, 11vw, 58px);
+    font-size: clamp(18px, 4.2vw, 22px);
     border-width: 2px;
     -webkit-tap-highlight-color: transparent;
   }
@@ -269,9 +303,9 @@ button {
   }
 
   .fire-btn {
-    width: 72px;
-    height: 72px;
-    font-size: 30px;
+    width: clamp(56px, 14vw, 74px);
+    height: clamp(56px, 14vw, 74px);
+    font-size: clamp(24px, 5.2vw, 30px);
   }
 
   .overlay h2 {
@@ -285,5 +319,73 @@ button {
   .overlay button {
     font-size: 14px;
     padding: 8px 16px;
+  }
+}
+
+/* ── 移动端横屏优化 ── */
+@media (hover: none) and (pointer: coarse) and (orientation: landscape), (max-width: 700px) and (orientation: landscape) {
+  .app {
+    height: 100vh;
+  }
+
+  .hud {
+    position: absolute;
+    top: var(--safe-top);
+    left: var(--safe-left);
+    right: var(--safe-right);
+    z-index: 20;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    padding: 4px 10px;
+    border-radius: 0;
+  }
+
+  .hud h1 {
+    display: none;
+  }
+
+  .stats {
+    font-size: 11px;
+    gap: 8px;
+    margin-bottom: 0;
+    justify-content: center;
+  }
+
+  .tips {
+    display: none;
+  }
+
+  .game-wrap {
+    border-radius: 0;
+    flex: 1;
+  }
+
+  .controls {
+    position: absolute;
+    inset: 0;
+    display: flex !important;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: calc(8px + var(--safe-top)) calc(10px + var(--safe-right)) calc(10px + var(--safe-bottom)) calc(10px + var(--safe-left));
+    pointer-events: none;
+    background: none;
+    backdrop-filter: none;
+    z-index: 15;
+  }
+
+  .controls > * {
+    pointer-events: auto;
+  }
+
+  .ctrl-btn {
+    width: clamp(40px, 8.2vw, 52px);
+    height: clamp(40px, 8.2vw, 52px);
+    font-size: clamp(16px, 3.2vw, 20px);
+  }
+
+  .fire-btn {
+    width: clamp(52px, 10vw, 64px);
+    height: clamp(52px, 10vw, 64px);
+    font-size: clamp(22px, 4vw, 28px);
   }
 }

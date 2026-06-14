@@ -10,6 +10,7 @@ const overlay = document.getElementById("overlay");
 const overlayTitle = document.getElementById("overlayTitle");
 const overlayText = document.getElementById("overlayText");
 const restartBtn = document.getElementById("restartBtn");
+const rotateHint = document.getElementById("rotateHint");
 
 const WORLD = {
   w: canvas.width,
@@ -952,6 +953,26 @@ document.addEventListener("gesturestart", (e) => {
     e.preventDefault();
   }
 });
+
+// ── 移动端竖屏提示横屏游玩 ──
+(function setupRotateHint() {
+  if (!rotateHint) return;
+
+  const isTouchDevice = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+  if (!isTouchDevice) {
+    rotateHint.classList.add("hidden");
+    return;
+  }
+
+  const updateRotateHint = () => {
+    const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+    rotateHint.classList.toggle("hidden", !isPortrait);
+  };
+
+  updateRotateHint();
+  window.addEventListener("resize", updateRotateHint);
+  window.addEventListener("orientationchange", updateRotateHint);
+})();
 
 restartBtn.addEventListener("click", resetGame);
 
