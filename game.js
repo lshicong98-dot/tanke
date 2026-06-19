@@ -6,6 +6,14 @@ const livesEl = document.getElementById("lives");
 const enemiesEl = document.getElementById("enemies");
 const levelEl = document.getElementById("level");
 const bulletCountEl = document.getElementById("bulletCount");
+const mobileStatusEl = document.getElementById("mobileStatus");
+const desktopModeBtn = document.getElementById("desktopModeBtn");
+const mobileModeBtn = document.getElementById("mobileModeBtn");
+const rulesBtn = document.getElementById("rulesBtn");
+const rulesPanel = document.getElementById("rulesPanel");
+const resumeBtn = document.getElementById("resumeBtn");
+const rotateHint = document.getElementById("rotateHint");
+const retryFullscreenBtn = document.getElementById("retryFullscreenBtn");
 const overlay = document.getElementById("overlay");
 const overlayTitle = document.getElementById("overlayTitle");
 const overlayText = document.getElementById("overlayText");
@@ -100,6 +108,8 @@ let spawnTimer = 0;
 let enemySpawnInterval = 1800;
 let lastTime = 0;
 let bossActive = false;
+let uiPaused = false;
+let currentMode = "desktop";
 
 const walls = [];
 const bullets = [];
@@ -312,6 +322,9 @@ function updateHud() {
   if (levelEl) {
     levelEl.textContent = `${level} (${enemiesDefeated}/${enemiesToWin})`;
   }
+  if (mobileStatusEl) {
+    mobileStatusEl.textContent = `分数 ${score} | 命 ${lives} | 关 ${level} (${enemiesDefeated}/${enemiesToWin}) | 弹 ${player.bulletCount}x`;
+  }
 }
 
 function showOverlay(title, text) {
@@ -397,6 +410,53 @@ function tankRect(tank) {
   return { x: tank.x, y: tank.y, w: tank.size, h: tank.size };
 }
 
+function pickEnemyEscapeDir(enemy) {
+  const dirs = ["up", "down", "left", "right"];
+  let bestDir = enemy.dir;
+  let bestScore = -Infinity;
+
+  for (const dir of dirs) {
+    let score = 0;
+    const nx = enemy.x + DIRS[dir].x * enemy.size;
+    const ny = enemy.y + DIRS[dir].y * enemy.size;
+    const probe = { x: nx, y: ny, w: enemy.size, h: enemy.size };
+
+    if (
+      nx < enemy.size / 2 ||
+      nx > WORLD.w - enemy.size / 2 ||
+      ny < enemy.size / 2 ||
+      ny > WORLD.h - enemy.size / 2 ||
+      walls.some((w) => rectHit(probe, { x: w.x, y: w.y, w: w.w, h: w.h }))
+    ) {
+      continue;
+    }
+
+    for (const other of enemies) {
+      if (other === enemy) continue;
+      const dist = Math.hypot(nx - other.x, ny - other.y);
+      score += dist;
+    }
+
+    if (dir === enemy.dir) score += 40;
+    if (score > bestScore) {
+      bestScore = score;
+      bestDir = dir;
+    }
+  }
+
+  return bestDir;
+}
+
+function separateEnemy(enemy, blocker) {
+  const dx = enemy.x - blocker.x;
+  const dy = enemy.y - blocker.y;
+  const distance = Math.hypot(dx, dy) || 1;
+  const push = 1.8;
+
+  enemy.x = Math.max(enemy.size / 2, Math.min(WORLD.w - enemy.size / 2, enemy.x + (dx / distance) * push));
+  enemy.y = Math.max(enemy.size / 2, Math.min(WORLD.h - enemy.size / 2, enemy.y + (dy / distance) * push));
+}
+
 function movePlayer(dt) {
   let dx = 0;
   let dy = 0;
@@ -471,7 +531,7 @@ function moveEnemies(dt) {
       ny > WORLD.h - enemy.size / 2;
 
     const blocked = walls.some((w) => rectHit(next, { x: w.x, y: w.y, w: w.w, h: w.h }));
-    const enemyBlocked = enemies.some((other) => {
+    const blockingEnemy = enemies.find((other) => {
       if (other === enemy) return false;
       return rectHit(next, { x: other.x, y: other.y, w: other.size, h: other.size });
     });
@@ -479,11 +539,11 @@ function moveEnemies(dt) {
     if (out || blocked) {
       const options = ["up", "down", "left", "right"].filter((d) => d !== enemy.dir);
       enemy.dir = options[(Math.random() * options.length) | 0];
-    } else if (enemyBlocked) {
-      // 被敌人挡住时换方向，但给冷却防止疯狂乱窜
-      const options = ["up", "down", "left", "right"];
-      enemy.dir = options[(Math.random() * options.length) | 0];
-      enemy.turnTimer = 300 + Math.random() * 400;
+      enemy.turnTimer = 180 + Math.random() * 260;
+    } else if (blockingEnemy) {
+      separateEnemy(enemy, blockingEnemy);
+      enemy.dir = pickEnemyEscapeDir(enemy);
+      enemy.turnTimer = 140 + Math.random() * 240;
     } else {
       enemy.x = nx;
       enemy.y = ny;
@@ -808,7 +868,7 @@ function tick(ts) {
   const dt = Math.min(0.033, (ts - lastTime) / 1000 || 0);
   lastTime = ts;
 
-  if (!gameOver) {
+  if (!gameOver && !uiPaused) {
     movePlayer(dt);
     moveEnemies(dt);
     updateBullets(dt);
@@ -889,6 +949,77 @@ window.addEventListener("keyup", (e) => {
   keys.delete(key);
 });
 
+function isPortrait() {
+  return window.matchMedia("(orientation: portrait)").matches;
+}
+
+function updateRotateHint() {
+  if (!rotateHint) return;
+  const shouldShow = currentMode === "mobile" && isPortrait();
+  rotateHint.classList.toggle("hidden", !shouldShow);
+  rotateHint.classList.toggle("auto", shouldShow);
+}
+
+async function requestMobileImmersive() {
+  try {
+    if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+      await document.documentElement.requestFullscreen();
+    }
+  } catch (err) {
+    updateRotateHint();
+  }
+
+  try {
+    if (screen.orientation?.lock) {
+      await screen.orientation.lock("landscape");
+    }
+  } catch (err) {
+    updateRotateHint();
+  }
+}
+
+function setMode(mode, options = {}) {
+  currentMode = mode;
+  document.body.classList.toggle("mode-mobile", mode === "mobile");
+  document.body.classList.toggle("mode-desktop", mode === "desktop");
+  desktopModeBtn?.classList.toggle("active", mode === "desktop");
+  mobileModeBtn?.classList.toggle("active", mode === "mobile");
+  localStorage.setItem("tankGameMode", mode);
+  updateRotateHint();
+
+  if (mode === "mobile" && options.immersive) {
+    requestMobileImmersive();
+  }
+  if (mode === "desktop") {
+    uiPaused = false;
+    rulesPanel?.classList.add("hidden");
+    rotateHint?.classList.add("hidden");
+    if (screen.orientation?.unlock) screen.orientation.unlock();
+    if (document.fullscreenElement && document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+}
+
+desktopModeBtn?.addEventListener("click", () => setMode("desktop"));
+mobileModeBtn?.addEventListener("click", () => setMode("mobile", { immersive: true }));
+rulesBtn?.addEventListener("click", () => {
+  uiPaused = true;
+  rulesPanel?.classList.remove("hidden");
+});
+resumeBtn?.addEventListener("click", () => {
+  rulesPanel?.classList.add("hidden");
+  uiPaused = false;
+});
+retryFullscreenBtn?.addEventListener("click", () => requestMobileImmersive());
+window.addEventListener("resize", updateRotateHint);
+window.addEventListener("orientationchange", updateRotateHint);
+document.addEventListener("fullscreenchange", updateRotateHint);
+
+const savedMode = localStorage.getItem("tankGameMode");
+const initialMode = savedMode || (window.innerWidth <= 900 ? "mobile" : "desktop");
+setMode(initialMode);
+
 // ── 虚拟按键（触摸 / 鼠标） ──
 (function setupVirtualControls() {
   const map = {
@@ -900,43 +1031,59 @@ window.addEventListener("keyup", (e) => {
   };
 
   const holdTimers = {};
+  const activePointers = new Map();
 
   function press(key) {
     if (holdTimers[key]) clearTimeout(holdTimers[key]);
     keys.add(key);
   }
-  function release(key) {
-    // 保持至少 200ms，让游戏循环能检测到
+  function release(key, immediate = false) {
+    if (holdTimers[key]) clearTimeout(holdTimers[key]);
+    if (immediate) {
+      keys.delete(key);
+      delete holdTimers[key];
+      return;
+    }
     holdTimers[key] = setTimeout(() => {
       keys.delete(key);
       delete holdTimers[key];
-    }, 200);
+    }, 80);
   }
 
   document.querySelectorAll(".ctrl-btn").forEach((btn) => {
     const raw = btn.dataset.key || "";
     const mapped = map[raw] || raw;
+    const isFire = mapped === " ";
 
     const start = (e) => {
       e.preventDefault();
+      if (e.pointerId != null) {
+        activePointers.set(e.pointerId, mapped);
+        btn.setPointerCapture?.(e.pointerId);
+      }
       btn.classList.add("pressed");
       press(mapped);
     };
     const end = (e) => {
       e.preventDefault();
+      if (e.pointerId != null) {
+        activePointers.delete(e.pointerId);
+        btn.releasePointerCapture?.(e.pointerId);
+      }
       btn.classList.remove("pressed");
-      release(mapped);
+      release(mapped, isFire);
     };
 
     btn.addEventListener("pointerdown", start);
     btn.addEventListener("pointerup", end);
     btn.addEventListener("pointercancel", end);
-    btn.addEventListener("pointerleave", end);
-    btn.addEventListener("mousedown", start);
-    btn.addEventListener("mouseup", end);
-    btn.addEventListener("touchstart", start, { passive: true });
-    btn.addEventListener("touchend", end);
-    btn.addEventListener("touchcancel", end);
+    btn.addEventListener("lostpointercapture", end);
+    btn.addEventListener("contextmenu", (e) => e.preventDefault());
+  });
+
+  window.addEventListener("blur", () => {
+    activePointers.clear();
+    keys.delete(" ");
   });
 })();
 

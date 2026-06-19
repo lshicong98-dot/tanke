@@ -9,7 +9,13 @@
 <body>
   <main class="app">
     <header class="hud">
-      <h1>坦克大战</h1>
+      <div class="hud-top">
+        <h1>坦克大战</h1>
+        <div class="mode-switch" aria-label="选择游戏模式">
+          <button id="desktopModeBtn" class="mode-btn" type="button">电脑版</button>
+          <button id="mobileModeBtn" class="mode-btn" type="button">手机版</button>
+        </div>
+      </div>
       <div class="stats">
         <span>分数: <strong id="score">0</strong></span>
         <span>生命: <strong id="lives">3</strong></span>
@@ -20,6 +26,10 @@
       <p class="tips">操作: WASD/方向键移动，空格射击，R重新开始</p>
     </header>
     <section class="game-wrap">
+      <div class="mobile-topbar">
+        <div id="mobileStatus" class="mobile-status">分数 0 | 命 3 | 关 1 | 弹 1x</div>
+        <button id="rulesBtn" class="rules-btn" type="button">规则</button>
+      </div>
       <canvas id="game" width="900" height="600" aria-label="坦克大战游戏画布"></canvas>
       <div id="controls" class="controls">
         <div class="dpad">
@@ -31,6 +41,20 @@
           </div>
         </div>
         <button class="ctrl-btn fire-btn" data-key=" ">🔥</button>
+      </div>
+      <div id="rulesPanel" class="rules-panel hidden" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+        <div class="rules-card">
+          <h2 id="rulesTitle">游戏规则</h2>
+          <p>移动：使用左侧方向键控制坦克。</p>
+          <p>发射：点击右侧红色按钮。</p>
+          <p>目标：保护基地，消灭每一关的敌人。</p>
+          <p>道具：拾取修复、连发、护盾可以增强生存能力。</p>
+          <button id="resumeBtn" type="button">继续游戏</button>
+        </div>
+      </div>
+      <div id="rotateHint" class="rotate-hint hidden">
+        <p>请横屏游玩，游戏画面会更大</p>
+        <button id="retryFullscreenBtn" type="button">全屏横屏</button>
       </div>
       <div id="overlay" class="overlay hidden">
         <h2 id="overlayTitle">游戏结束</h2>
