@@ -193,6 +193,62 @@ button {
   gap: 6px;
 }
 
+.joystick {
+  position: relative;
+  display: none;
+  width: clamp(110px, 18vw, 145px);
+  height: clamp(110px, 18vw, 145px);
+  border: 2px solid rgba(255,255,255,0.28);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, rgba(255,209,102,0.12) 0 22%, transparent 23%),
+    rgba(0,0,0,0.42);
+  backdrop-filter: blur(5px);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.joystick::before,
+.joystick::after {
+  content: "";
+  position: absolute;
+  background: rgba(255,255,255,0.18);
+  pointer-events: none;
+}
+
+.joystick::before {
+  left: 50%;
+  top: 12%;
+  bottom: 12%;
+  width: 2px;
+  transform: translateX(-50%);
+}
+
+.joystick::after {
+  top: 50%;
+  left: 12%;
+  right: 12%;
+  height: 2px;
+  transform: translateY(-50%);
+}
+
+.joystick-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 42%;
+  height: 42%;
+  border: 2px solid rgba(255,255,255,0.55);
+  border-radius: 50%;
+  background: rgba(255,209,102,0.82);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.32);
+  transform: translate(-50%, -50%);
+  transition: transform 0.06s ease-out;
+  pointer-events: none;
+}
+
 .ctrl-btn {
   width: 128px;
   height: 128px;
@@ -254,8 +310,8 @@ body.mode-mobile .hud {
 }
 
 body.mode-mobile .game-wrap {
-  --left-zone: clamp(120px, 22vw, 170px);
-  --right-zone: clamp(100px, 17vw, 150px);
+  --left-zone: clamp(210px, 24vw, 250px);
+  --right-zone: clamp(110px, 17vw, 150px);
   --top-zone: clamp(42px, 8dvh, 58px);
   --bottom-zone: clamp(4px, 1dvh, 10px);
   width: 100vw;
@@ -315,7 +371,7 @@ body.mode-mobile .rules-btn {
 
 body.mode-mobile .controls {
   position: absolute;
-  inset: var(--top-zone) 0 0 0;
+  inset: var(--top-zone) max(14px, env(safe-area-inset-right, 0px)) 0 max(18px, env(safe-area-inset-left, 0px));
   z-index: 7;
   display: grid;
   grid-template-columns: var(--left-zone) 1fr var(--right-zone);
@@ -326,8 +382,14 @@ body.mode-mobile .controls {
 }
 
 body.mode-mobile .dpad {
+  display: none;
+}
+
+body.mode-mobile .joystick {
+  display: block;
   grid-column: 1;
-  gap: 4px;
+  justify-self: end;
+  margin-right: 16px;
 }
 
 body.mode-mobile .fire-btn {
@@ -335,11 +397,11 @@ body.mode-mobile .fire-btn {
 }
 
 body.mode-mobile .ctrl-btn {
-  width: clamp(42px, 7.8vw, 64px);
-  height: clamp(42px, 7.8vw, 64px);
+  width: clamp(40px, 7.2vw, 58px);
+  height: clamp(40px, 7.2vw, 58px);
   border-width: 2px;
-  border-radius: 13px;
-  font-size: clamp(20px, 3.4vw, 30px);
+  border-radius: 12px;
+  font-size: clamp(19px, 3.2vw, 28px);
 }
 
 body.mode-mobile .fire-btn {

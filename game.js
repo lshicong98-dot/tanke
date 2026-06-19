@@ -14,6 +14,8 @@ const rulesPanel = document.getElementById("rulesPanel");
 const resumeBtn = document.getElementById("resumeBtn");
 const rotateHint = document.getElementById("rotateHint");
 const retryFullscreenBtn = document.getElementById("retryFullscreenBtn");
+const joystick = document.getElementById("joystick");
+const joystickKnob = document.getElementById("joystickKnob");
 const overlay = document.getElementById("overlay");
 const overlayTitle = document.getElementById("overlayTitle");
 const overlayText = document.getElementById("overlayText");
@@ -110,6 +112,10 @@ let lastTime = 0;
 let bossActive = false;
 let uiPaused = false;
 let currentMode = "desktop";
+const joystickInput = {
+  active: false,
+  dir: null,
+};
 
 const walls = [];
 const bullets = [];
@@ -461,27 +467,29 @@ function movePlayer(dt) {
   let dx = 0;
   let dy = 0;
 
-  if (keys.has("ArrowUp") || keys.has("w")) {
-    dy -= 1;
-    player.dir = "up";
-  }
-  if (keys.has("ArrowDown") || keys.has("s")) {
-    dy += 1;
-    player.dir = "down";
-  }
-  if (keys.has("ArrowLeft") || keys.has("a")) {
-    dx -= 1;
-    player.dir = "left";
-  }
-  if (keys.has("ArrowRight") || keys.has("d")) {
-    dx += 1;
-    player.dir = "right";
-  }
-
-  if (dx !== 0 && dy !== 0) {
-    const inv = 1 / Math.sqrt(2);
-    dx *= inv;
-    dy *= inv;
+  if (joystickInput.active && joystickInput.dir) {
+    if (joystickInput.dir === "up") dy = -1;
+    if (joystickInput.dir === "down") dy = 1;
+    if (joystickInput.dir === "left") dx = -1;
+    if (joystickInput.dir === "right") dx = 1;
+    player.dir = joystickInput.dir;
+  } else {
+    if (keys.has("ArrowUp") || keys.has("w")) {
+      dy -= 1;
+      player.dir = "up";
+    }
+    if (keys.has("ArrowDown") || keys.has("s")) {
+      dy += 1;
+      player.dir = "down";
+    }
+    if (keys.has("ArrowLeft") || keys.has("a")) {
+      dx -= 1;
+      player.dir = "left";
+    }
+    if (keys.has("ArrowRight") || keys.has("d")) {
+      dx += 1;
+      player.dir = "right";
+    }
   }
 
   const next = {
@@ -1020,6 +1028,66 @@ const savedMode = localStorage.getItem("tankGameMode");
 const initialMode = savedMode || (window.innerWidth <= 900 ? "mobile" : "desktop");
 setMode(initialMode);
 
+function resetJoystick() {
+  joystickInput.active = false;
+  joystickInput.dir = null;
+  if (joystickKnob) {
+    joystickKnob.style.transform = "translate(-50%, -50%)";
+  }
+}
+
+function updateJoystickFromPointer(e) {
+  if (!joystick || !joystickKnob) return;
+  const rect = joystick.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const dx = e.clientX - cx;
+  const dy = e.clientY - cy;
+  const distance = Math.hypot(dx, dy);
+  const deadZone = rect.width * 0.16;
+  const snapDistance = rect.width * 0.27;
+
+  if (distance < deadZone) {
+    joystickInput.dir = null;
+    joystickKnob.style.transform = "translate(-50%, -50%)";
+    return;
+  }
+
+  const horizontal = Math.abs(dx) > Math.abs(dy);
+  joystickInput.dir = horizontal ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
+  const knobX = joystickInput.dir === "right" ? snapDistance : joystickInput.dir === "left" ? -snapDistance : 0;
+  const knobY = joystickInput.dir === "down" ? snapDistance : joystickInput.dir === "up" ? -snapDistance : 0;
+  joystickKnob.style.transform = `translate(calc(-50% + ${knobX}px), calc(-50% + ${knobY}px))`;
+}
+
+(function setupJoystick() {
+  if (!joystick) return;
+
+  joystick.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    joystickInput.active = true;
+    joystick.setPointerCapture?.(e.pointerId);
+    updateJoystickFromPointer(e);
+  });
+
+  joystick.addEventListener("pointermove", (e) => {
+    if (!joystickInput.active) return;
+    e.preventDefault();
+    updateJoystickFromPointer(e);
+  });
+
+  const end = (e) => {
+    e.preventDefault();
+    joystick.releasePointerCapture?.(e.pointerId);
+    resetJoystick();
+  };
+
+  joystick.addEventListener("pointerup", end);
+  joystick.addEventListener("pointercancel", end);
+  joystick.addEventListener("lostpointercapture", resetJoystick);
+  joystick.addEventListener("contextmenu", (e) => e.preventDefault());
+})();
+
 // ── 虚拟按键（触摸 / 鼠标） ──
 (function setupVirtualControls() {
   const map = {
@@ -1084,6 +1152,7 @@ setMode(initialMode);
   window.addEventListener("blur", () => {
     activePointers.clear();
     keys.delete(" ");
+    resetJoystick();
   });
 })();
 
