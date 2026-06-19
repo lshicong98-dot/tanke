@@ -196,29 +196,39 @@ button {
 .joystick {
   position: relative;
   display: none;
-  width: clamp(110px, 18vw, 145px);
-  height: clamp(110px, 18vw, 145px);
-  border: 2px solid rgba(255,255,255,0.28);
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at center, rgba(255,209,102,0.12) 0 22%, transparent 23%),
-    rgba(0,0,0,0.42);
-  backdrop-filter: blur(5px);
+  width: clamp(118px, 19vw, 150px);
+  height: clamp(118px, 19vw, 150px);
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
 }
 
-.joystick::before,
-.joystick::after {
+.joystick-base {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(86px, 14vw, 118px);
+  height: clamp(86px, 14vw, 118px);
+  border: 2px solid rgba(255,255,255,0.28);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, rgba(255,209,102,0.12) 0 22%, transparent 23%),
+    rgba(0,0,0,0.42);
+  backdrop-filter: blur(5px);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.joystick-base::before,
+.joystick-base::after {
   content: "";
   position: absolute;
   background: rgba(255,255,255,0.18);
   pointer-events: none;
 }
 
-.joystick::before {
+.joystick-base::before {
   left: 50%;
   top: 12%;
   bottom: 12%;
@@ -226,7 +236,7 @@ button {
   transform: translateX(-50%);
 }
 
-.joystick::after {
+.joystick-base::after {
   top: 50%;
   left: 12%;
   right: 12%;
@@ -238,8 +248,8 @@ button {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 42%;
-  height: 42%;
+  width: 38%;
+  height: 38%;
   border: 2px solid rgba(255,255,255,0.55);
   border-radius: 50%;
   background: rgba(255,209,102,0.82);
@@ -310,10 +320,10 @@ body.mode-mobile .hud {
 }
 
 body.mode-mobile .game-wrap {
-  --left-zone: clamp(210px, 24vw, 250px);
-  --right-zone: clamp(110px, 17vw, 150px);
-  --top-zone: clamp(42px, 8dvh, 58px);
-  --bottom-zone: clamp(4px, 1dvh, 10px);
+  --left-zone: clamp(150px, 18vw, 190px);
+  --right-zone: clamp(96px, 13vw, 124px);
+  --top-zone: clamp(34px, 7dvh, 46px);
+  --bottom-zone: clamp(8px, 4dvh, 28px);
   width: 100vw;
   height: 100dvh;
   border: none;
@@ -353,11 +363,11 @@ body.mode-mobile .mobile-status {
   max-width: calc(100vw - 92px);
   border: 1px solid rgba(255,255,255,0.22);
   border-radius: 12px;
-  padding: 5px 8px;
+  padding: 4px 8px;
   background: rgba(0,0,0,0.62);
   backdrop-filter: blur(5px);
-  font-size: clamp(11px, 2vw, 14px);
-  line-height: 1.25;
+  font-size: clamp(10px, 1.8vw, 13px);
+  line-height: 1.18;
   white-space: normal;
   pointer-events: auto;
 }

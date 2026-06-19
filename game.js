@@ -15,6 +15,7 @@ const resumeBtn = document.getElementById("resumeBtn");
 const rotateHint = document.getElementById("rotateHint");
 const retryFullscreenBtn = document.getElementById("retryFullscreenBtn");
 const joystick = document.getElementById("joystick");
+const joystickBase = document.getElementById("joystickBase");
 const joystickKnob = document.getElementById("joystickKnob");
 const overlay = document.getElementById("overlay");
 const overlayTitle = document.getElementById("overlayTitle");
